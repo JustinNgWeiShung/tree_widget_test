@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem,QMainWindow,QDialog, QDialogButtonBox, QVBoxLayout,QHBoxLayout,QWidget,QComboBox,QLabel,QTreeWidgetItem
 import sys
+import random
 
 def create_combobox_widget(tree_widget,tree_item_widget,phasename,options):
     print("create combobox widget")
@@ -12,7 +13,8 @@ def create_combobox_widget(tree_widget,tree_item_widget,phasename,options):
     for option in options:
         select_combo.addItem(option)
     select_combo.currentTextChanged.connect(lambda _:on_connect_validation(tree_widget,tree_item_widget,phasename,select_combo.currentText()))
-    select_combo.setCurrentIndex(0)
+    select_combo.setCurrentIndex(random.randint(0,4))
+    select_layout.setContentsMargins(0,0,0,0)
     select_layout.addWidget(select_label)
     select_layout.addWidget(select_combo)
     container_widget.setLayout(select_layout)
@@ -29,26 +31,13 @@ def on_connect_validation(tree_widget,tree_item_widget,phase_name,anim_name):
     print(phase_name,anim_name)
     print("validate")
     if anim_name == "a1":
-        label = QLabel()
-        label.setText(f"{phase_name} becomes anim {anim_name}")
-        label.setStyleSheet("color: yellow;")
-        tree_widget.setItemWidget(tree_item_widget,1,label)
+        create_validation_label(tree_widget,tree_item_widget,f"{phase_name} becomes anim {anim_name}","color: yellow;")
     elif anim_name == "a2":
-        label = QLabel()
-        label.setText(f"Invalid anim added {anim_name}")
-        label.setStyleSheet("color: red;")
-        tree_widget.setItemWidget(tree_item_widget,1,label)
+        create_validation_label(tree_widget,tree_item_widget,f"Invalid anim added {anim_name}","color: red;")
     elif anim_name == "a3":
-        label = QLabel()
-        label.setText("\u2714")
-        label.setStyleSheet("color: green;")
-        tree_widget.setItemWidget(tree_item_widget,1,label)
+        create_validation_label(tree_widget,tree_item_widget,"\u2714","color: green;")
     else:
-        label = QLabel()
-        label.setText("")
-        label.setStyleSheet("color: green;")
-        tree_widget.setItemWidget(tree_item_widget,1,label)
-
+        create_validation_label(tree_widget,tree_item_widget,"","color: green;")
 
 def accept(app):
     print("accept")
@@ -80,6 +69,7 @@ def main():
     window.resize(800,600)
 
     layout = QVBoxLayout()
+    layout.setContentsMargins(0,0,0,0)
     tree_widget = QTreeWidget()
     tree_widget.setColumnCount(2) # Example with two columns
     tree_widget.setHeaderLabels(["Name", "Description"])
@@ -98,7 +88,6 @@ def main():
             anims_child_item.addChild(container_widget)
             npc_anims_combo_widget = create_combobox_widget(tree_widget,container_widget,phase,anims_available)
             tree_widget.setItemWidget(container_widget,0,npc_anims_combo_widget)
-            create_validation_label(tree_widget,container_widget)
         
         # Struct anims Child item
         struct_anims_child_item = QTreeWidgetItem(["test Struct Anims"])
@@ -114,7 +103,6 @@ def main():
                         struct_anims_item.addChild(container_widget)
                         test_anims_combo_widget = create_combobox_widget(tree_widget,container_widget,phase,anims_available)
                         tree_widget.setItemWidget(container_widget,0,test_anims_combo_widget)
-                        create_validation_label(tree_widget,container_widget)
     
     button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
     button_box.accepted.connect(lambda : accept(app))
