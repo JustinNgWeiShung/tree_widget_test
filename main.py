@@ -1,14 +1,17 @@
-from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem,QMainWindow,QDialog, QDialogButtonBox, QVBoxLayout,QHBoxLayout,QWidget,QComboBox,QLabel,QTreeWidgetItem
+from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem,QMainWindow,QDialog, QDialogButtonBox, QVBoxLayout,QHBoxLayout,QWidget,QComboBox,QLabel,QTreeWidgetItem,QSizePolicy
 import sys
 import random
 
-def create_combobox_widget(tree_widget,tree_item_widget,phasename,options):
+def create_combobox_widget(tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetItem,phasename:str,options:list[str]):
     print("create combobox widget")
     container_widget = QWidget()
     select_layout = QHBoxLayout()
     select_label = QLabel(phasename)
     select_combo = QComboBox()
-
+    select_label.setSizePolicy(QSizePolicy.Policy.Fixed,QSizePolicy.Policy.Fixed)
+    select_label.setFixedSize(150,15)
+    select_combo.setSizePolicy(QSizePolicy.Policy.Fixed,QSizePolicy.Policy.Fixed)
+    select_combo.setFixedSize(500,15)
     select_combo.addItem("None")
     for option in options:
         select_combo.addItem(option)
@@ -20,14 +23,14 @@ def create_combobox_widget(tree_widget,tree_item_widget,phasename,options):
     container_widget.setLayout(select_layout)
     return container_widget
 
-def create_validation_label(tree_widget:QTreeWidget,tree_item_widget,text,style):
+def create_validation_label(tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetItem,text:str,style:str):
     print("validation label")
     label = QLabel()
     label.setText(text)
     label.setStyleSheet(style)
     tree_widget.setItemWidget(tree_item_widget,1,label)
 
-def on_connect_validation(tree_widget,tree_item_widget,phase_name,anim_name):
+def on_connect_validation(tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetItem,phase_name:str,anim_name:str):
     print(phase_name,anim_name)
     print("validate")
     if anim_name == "a1":
@@ -37,14 +40,14 @@ def on_connect_validation(tree_widget,tree_item_widget,phase_name,anim_name):
     elif anim_name == "a3":
         create_validation_label(tree_widget,tree_item_widget,"\u2714","color: green;")
     else:
-        create_validation_label(tree_widget,tree_item_widget,"","color: green;")
+        create_validation_label(tree_widget,tree_item_widget,"\u2714","color: green;")
 
-def accept(app):
+def accept():
     print("accept")
     print("exit2")
     sys.exit(1)
 
-def reject(app):
+def reject():
     print("reject")
     print("exit3")
     sys.exit(0)
@@ -71,7 +74,6 @@ def main():
     layout = QVBoxLayout()
     layout.setContentsMargins(0,0,0,0)
     tree_widget = QTreeWidget()
-    tree_widget.setColumnCount(2) # Example with two columns
     tree_widget.setHeaderLabels(["Name", "Description"])
 
     # Top-level item
@@ -105,8 +107,8 @@ def main():
                         tree_widget.setItemWidget(container_widget,0,test_anims_combo_widget)
     
     button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-    button_box.accepted.connect(lambda : accept(app))
-    button_box.rejected.connect(lambda : reject(app))
+    button_box.accepted.connect(lambda : accept())
+    button_box.rejected.connect(lambda : reject())
 
     layout.addWidget(tree_widget)
     layout.addWidget(button_box)
@@ -116,7 +118,7 @@ def main():
     window.setCentralWidget(container_widget)
     window.show()
     tree_widget.expandAll()
-    tree_widget.header().resizeSection(0, 300)
+    tree_widget.header().resizeSection(0, 800)
     print("exit")
     sys.exit(app.exec())
 
