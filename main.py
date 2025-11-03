@@ -8,18 +8,16 @@ def create_combobox_widget(tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetI
     select_layout = QHBoxLayout()
     select_label = QLabel(phasename)
     select_combo = QComboBox()
-    select_label.setSizePolicy(QSizePolicy.Policy.Fixed,QSizePolicy.Policy.Fixed)
-    select_label.setFixedSize(150,15)
-    select_combo.setSizePolicy(QSizePolicy.Policy.Fixed,QSizePolicy.Policy.Fixed)
-    select_combo.setFixedSize(500,15)
     select_combo.addItem("None")
     for option in options:
         select_combo.addItem(option)
-    select_combo.currentTextChanged.connect(lambda _:on_connect_validation(tree_widget,tree_item_widget,phasename,select_combo.currentText()))
+    select_combo.currentTextChanged.connect(lambda _:on_connect_validation(create_validation_label(tree_widget,tree_item_widget,f"{phasename} becomes anim","color: yellow;"),tree_widget,tree_item_widget,phasename,select_combo.currentText()))
     select_combo.setCurrentIndex(random.randint(0,4))
     select_layout.setContentsMargins(0,0,0,0)
     select_layout.addWidget(select_label)
     select_layout.addWidget(select_combo)
+
+    
     container_widget.setLayout(select_layout)
     return container_widget
 
@@ -29,18 +27,24 @@ def create_validation_label(tree_widget:QTreeWidget,tree_item_widget:QTreeWidget
     label.setText(text)
     label.setStyleSheet(style)
     tree_widget.setItemWidget(tree_item_widget,1,label)
+    return label
 
-def on_connect_validation(tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetItem,phase_name:str,anim_name:str):
+def set_validation_label(label,tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetItem,text:str,style:str):
+    label.setText(text)
+    label.setStyleSheet(style)
+    tree_widget.setItemWidget(tree_item_widget,1,label)
+
+def on_connect_validation(label,tree_widget:QTreeWidget,tree_item_widget:QTreeWidgetItem,phase_name:str,anim_name:str):
     print(phase_name,anim_name)
     print("validate")
     if anim_name == "a1":
-        create_validation_label(tree_widget,tree_item_widget,f"{phase_name} becomes anim {anim_name}","color: yellow;")
+        set_validation_label(label,tree_widget,tree_item_widget,f"{phase_name} becomes anim {anim_name}","color: yellow;")
     elif anim_name == "a2":
-        create_validation_label(tree_widget,tree_item_widget,f"Invalid anim added {anim_name}","color: red;")
+        set_validation_label(label,tree_widget,tree_item_widget,f"Invalid anim added {anim_name}","color: red;")
     elif anim_name == "a3":
-        create_validation_label(tree_widget,tree_item_widget,"\u2714","color: green;")
+        set_validation_label(label,tree_widget,tree_item_widget,"\u2714","color: green;")
     else:
-        create_validation_label(tree_widget,tree_item_widget,"\u2714","color: green;")
+        set_validation_label(label,tree_widget,tree_item_widget,"\u2714","color: green;")
 
 def accept():
     print("accept")
@@ -69,7 +73,7 @@ def main():
     app = QApplication(sys.argv)
     window = QMainWindow()
     window.setWindowTitle("test tree widget")
-    window.resize(800,600)
+    window.resize(600,600)
 
     layout = QVBoxLayout()
     layout.setContentsMargins(0,0,0,0)
@@ -118,7 +122,7 @@ def main():
     window.setCentralWidget(container_widget)
     window.show()
     tree_widget.expandAll()
-    tree_widget.header().resizeSection(0, 800)
+    tree_widget.header().resizeSection(0, 400)
     print("exit")
     sys.exit(app.exec())
 
